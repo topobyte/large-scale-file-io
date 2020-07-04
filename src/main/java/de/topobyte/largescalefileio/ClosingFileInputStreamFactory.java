@@ -17,12 +17,12 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 public interface ClosingFileInputStreamFactory
 {
 
-	public InputStream create(File file);
+	public InputStream create(Path file);
 
 }

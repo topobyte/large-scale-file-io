@@ -17,10 +17,10 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 class SimpleClosingFileInputStreamPool implements ClosingFileInputStreamPool
 {
@@ -29,10 +29,10 @@ class SimpleClosingFileInputStreamPool implements ClosingFileInputStreamPool
 	private int cacheId = -1;
 
 	@Override
-	public InputStream create(File file, int id, long pos) throws IOException
+	public InputStream create(Path file, int id, long pos) throws IOException
 	{
 		if (cache == null) {
-			cache = new FileInputStream(file);
+			cache = Files.newInputStream(file);
 			seek(pos);
 			cacheId = id;
 			return cache;
@@ -40,7 +40,7 @@ class SimpleClosingFileInputStreamPool implements ClosingFileInputStreamPool
 			return cache;
 		} else {
 			cache.close();
-			cache = new FileInputStream(file);
+			cache = Files.newInputStream(file);
 			seek(pos);
 			cacheId = id;
 			return cache;

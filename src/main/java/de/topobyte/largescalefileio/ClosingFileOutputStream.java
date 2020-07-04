@@ -17,20 +17,20 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 
 class ClosingFileOutputStream extends OutputStream
 {
 
 	private ClosingFileOutputStreamPool pool;
-	private File file;
+	private Path file;
 	private int id;
 	private boolean append = false;
 
-	public ClosingFileOutputStream(ClosingFileOutputStreamPool pool, File file,
+	public ClosingFileOutputStream(ClosingFileOutputStreamPool pool, Path file,
 			int id) throws IOException
 	{
 		this.pool = pool;
@@ -39,7 +39,7 @@ class ClosingFileOutputStream extends OutputStream
 
 		// Open and close the file to emulate FileOutputStream behavior
 		// concerning file truncation
-		FileOutputStream out = new FileOutputStream(file);
+		OutputStream out = Files.newOutputStream(file);
 		out.close();
 	}
 

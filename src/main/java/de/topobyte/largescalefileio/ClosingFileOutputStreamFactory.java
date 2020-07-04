@@ -17,13 +17,13 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Path;
 
 public interface ClosingFileOutputStreamFactory
 {
 
-	public OutputStream create(File file) throws IOException;
+	public OutputStream create(Path file) throws IOException;
 
 }

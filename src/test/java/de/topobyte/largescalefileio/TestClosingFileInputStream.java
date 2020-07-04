@@ -17,14 +17,14 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -32,14 +32,14 @@ import org.junit.Test;
 public class TestClosingFileInputStream
 {
 
-	private Set<File> allFiles = new HashSet<>();
-	private File[] files;
+	private Set<Path> allFiles = new HashSet<>();
+	private Path[] files;
 
 	@After
 	public void cleanup() throws IOException
 	{
-		for (File file : allFiles) {
-			file.delete();
+		for (Path file : allFiles) {
+			Files.delete(file);
 		}
 	}
 
@@ -53,9 +53,9 @@ public class TestClosingFileInputStream
 
 	public void test(int n) throws IOException
 	{
-		files = new File[n];
+		files = new Path[n];
 		for (int i = 0; i < n; i++) {
-			files[i] = File.createTempFile("closing-fis", ".dat");
+			files[i] = Files.createTempFile("closing-fis", ".dat");
 		}
 		allFiles.addAll(Arrays.asList(files));
 
@@ -66,7 +66,7 @@ public class TestClosingFileInputStream
 		}
 
 		for (int i = 0; i < n; i++) {
-			FileUtils.writeByteArrayToFile(files[i], bytes[i]);
+			Files.write(files[i], bytes[i]);
 		}
 
 		ClosingFileInputStreamFactory factory = new SimpleClosingFileInputStreamFactory();

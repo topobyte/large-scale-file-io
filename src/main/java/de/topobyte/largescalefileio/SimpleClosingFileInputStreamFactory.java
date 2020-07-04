@@ -17,18 +17,18 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
 import java.io.InputStream;
+import java.nio.file.Path;
 
-public class SimpleClosingFileInputStreamFactory implements
-		ClosingFileInputStreamFactory
+public class SimpleClosingFileInputStreamFactory
+		implements ClosingFileInputStreamFactory
 {
 
 	private int idFactory = 0;
 	private ClosingFileInputStreamPool pool = new SimpleClosingFileInputStreamPool();
 
 	@Override
-	public InputStream create(File file)
+	public InputStream create(Path file)
 	{
 		return new ClosingFileInputStream(pool, file, idFactory++);
 	}

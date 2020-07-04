@@ -17,15 +17,14 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.commons.io.FileUtils;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
@@ -33,14 +32,14 @@ import org.junit.Test;
 public class TestClosingFileOutputStream
 {
 
-	private Set<File> allFiles = new HashSet<>();
-	private File[] files;
+	private Set<Path> allFiles = new HashSet<>();
+	private Path[] files;
 
 	@After
 	public void cleanup() throws IOException
 	{
-		for (File file : allFiles) {
-			file.delete();
+		for (Path file : allFiles) {
+			Files.delete(file);
 		}
 	}
 
@@ -57,9 +56,9 @@ public class TestClosingFileOutputStream
 
 	public void test(int n, boolean existingFiles) throws IOException
 	{
-		files = new File[n];
+		files = new Path[n];
 		for (int i = 0; i < n; i++) {
-			files[i] = File.createTempFile("closing-fos", ".dat");
+			files[i] = Files.createTempFile("closing-fos", ".dat");
 		}
 		allFiles.addAll(Arrays.asList(files));
 
@@ -89,7 +88,7 @@ public class TestClosingFileOutputStream
 		}
 
 		for (int i = 0; i < n; i++) {
-			byte[] read = FileUtils.readFileToByteArray(files[i]);
+			byte[] read = Files.readAllBytes(files[i]);
 			Assert.assertArrayEquals(bytes[i], read);
 		}
 	}
@@ -98,7 +97,7 @@ public class TestClosingFileOutputStream
 	@SuppressWarnings("resource")
 	public void testOpenTruncatesFile() throws IOException
 	{
-		File file = File.createTempFile("closing-fos", ".dat");
+		Path file = Files.createTempFile("closing-fos", ".dat");
 		allFiles.add(file);
 
 		ByteArrayGenerator generator = new ByteArrayGenerator();
@@ -107,17 +106,17 @@ public class TestClosingFileOutputStream
 		SimpleClosingFileOutputStreamPool factory = new SimpleClosingFileOutputStreamPool();
 		new ClosingFileOutputStream(factory, file, 0);
 
-		byte[] read = FileUtils.readFileToByteArray(file);
+		byte[] read = Files.readAllBytes(file);
 		Assert.assertEquals(0, read.length);
 	}
 
-	private void writeSomeData(File file, ByteArrayGenerator generator)
+	private void writeSomeData(Path file, ByteArrayGenerator generator)
 			throws IOException
 	{
 		byte[] bytes = generator.generateBytes(100);
-		FileOutputStream fos = new FileOutputStream(file);
-		fos.write(bytes);
-		fos.close();
+		try (OutputStream fos = Files.newOutputStream(file)) {
+			fos.write(bytes);
+		}
 	}
 
 }

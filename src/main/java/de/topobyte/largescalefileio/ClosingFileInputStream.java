@@ -17,19 +17,19 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 class ClosingFileInputStream extends InputStream
 {
 
 	private ClosingFileInputStreamPool pool;
-	private File file;
+	private Path file;
 	private int id;
 	private long pos = 0;
 
-	public ClosingFileInputStream(ClosingFileInputStreamPool pool, File file,
+	public ClosingFileInputStream(ClosingFileInputStreamPool pool, Path file,
 			int id)
 	{
 		this.pool = pool;

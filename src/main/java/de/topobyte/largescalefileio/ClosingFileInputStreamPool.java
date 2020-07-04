@@ -17,14 +17,14 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.nio.file.Path;
 
 interface ClosingFileInputStreamPool
 {
 
-	public InputStream create(File file, int id, long pos) throws IOException;
+	public InputStream create(Path file, int id, long pos) throws IOException;
 
 	public void close(int id) throws IOException;
 

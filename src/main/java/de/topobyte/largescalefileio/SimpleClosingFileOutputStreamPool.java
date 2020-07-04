@@ -17,10 +17,11 @@
 
 package de.topobyte.largescalefileio;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.StandardOpenOption;
 
 class SimpleClosingFileOutputStreamPool implements ClosingFileOutputStreamPool
 {
@@ -29,20 +30,29 @@ class SimpleClosingFileOutputStreamPool implements ClosingFileOutputStreamPool
 	private int cacheId = -1;
 
 	@Override
-	public OutputStream create(File file, int id, boolean append)
+	public OutputStream create(Path file, int id, boolean append)
 			throws IOException
 	{
 		if (cache == null) {
-			cache = new FileOutputStream(file, append);
+			cache = open(file, append);
 			cacheId = id;
 			return cache;
 		} else if (cacheId == id) {
 			return cache;
 		} else {
 			cache.close();
-			cache = new FileOutputStream(file, append);
+			cache = open(file, append);
 			cacheId = id;
 			return cache;
+		}
+	}
+
+	private OutputStream open(Path file, boolean append) throws IOException
+	{
+		if (append) {
+			return Files.newOutputStream(file, StandardOpenOption.APPEND);
+		} else {
+			return Files.newOutputStream(file);
 		}
 	}
 
